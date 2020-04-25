@@ -3,19 +3,18 @@ services:
   mongo:
     image: mongo
     networks:
-      - backend    
+      - custom_network    
     restart: on-failure
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - 27017:27017
-    container_name: "${app_name}_${instance_id}_mongo_db"
+    container_name: "${app_name}_${instance_id}_mongo_db_server"
   mongo-express:
     image: mongo-express
     networks:
-      - frontend # @todo - make mongo express more secure, maybe remove from production build when done?
-      - backend    
+      - custom_network
     restart: on-failure
     ports:
       - 8085:8085
@@ -34,22 +33,23 @@ services:
     volumes:
       - nodemodules:/home/node/app/node_modules  
       - .:/home/node/app
-    container_name: "${app_name}_${instance_id}_node_modules_builder"
+    container_name: "${app_name}_${instance_id}_node_modules_builder_server"
     command: npm i    
   node_server:
     image: node:alpine3.11
     networks:
-      - frontend
-      - backend    
+      - custom_network
     restart: on-failure
     expose: 
       - "3666"
+    ports:
+      - 8084:3666 
     user: "node"
     working_dir: /home/node/app
     environment:
       - NODE_ENV=production
     volumes:
-      - ./dist/server/:/home/node/app
+      - ./dist/:/home/node/app
       - nodemodules:/home/node/app/node_modules
     depends_on:
       - mongo
@@ -59,7 +59,7 @@ services:
 volumes:
   nodemodules:
     external: true
-    name: ${app_name}_nodemodules_${instance_id}
+    name: ${app_name}_nodemodules_${instance_id}_server
 networks:
   custom_network:
     external:

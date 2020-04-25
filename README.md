@@ -9,5 +9,4 @@ Provide a minimal-fuss go-to application stack that can be re-used and up-dated 
 ## To use
 - create your .env file (from .env.example)
 - run ./deploy.sh
-- update your windows hosts file to point whatever-is-in-your-nginx.conf to 127.0.0.1
-- enjoy
+- see your server running on http://localhost:8084 (its also exposed on a custom docker network on 3666, if you dont want to publicly expose it.)

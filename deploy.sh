@@ -9,7 +9,9 @@ printf "${GREEN}Exporting ENV vars to shell${NC}\n"
 export $(egrep -v '^#' .env | xargs) # Export the vars in .env into your shell
 printf "${GREEN}Building project ${app_name}, Instance: ${instance_id} ${NC}\n"
 printf "${GREEN}Creating shared volume${NC}\n"
-docker volume create "${app_name}_nodemodules_${instance_id}" # Create an external volume for storing shared node_modules
+docker volume create "--name=${app_name}_nodemodules_${instance_id}_server" # Create an external volume for storing shared node_modules
+printf "${GREEN}Creating network${NC}\n"
+docker network create "${app_name}_nodemodules_${instance_id}_network"
 printf "${GREEN}Installing container node_modules to volume (via alpine container)${NC}\n"
 docker-compose run node_modules_container # Fires up a node:alpine container, runs npm install (to the volume above, then exits)
 printf "${GREEN}Remember to update your windows hosts file!${NC}\n"
